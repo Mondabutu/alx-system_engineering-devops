@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
-# This script is displaying "Best School" 10 times
+# A script that displays Best School 10 times using while
 
-k=1
-while [ "$k" -le "10" ]
+i=1
+
+while [ $i -le 10 ]
 do
     echo "Best School"
-    (( k++ ))
+    ((i++))
 done
