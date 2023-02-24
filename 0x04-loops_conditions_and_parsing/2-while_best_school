@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # This script is displaying "Best School" 10 times
 
-k=0
-while [ "$k" -lt "10" ]
+k=1
+while [ "$k" -le "10" ]
 do
     echo "Best School"
-    k=$(( k + 1 ))
+    (( k++ ))
 done
