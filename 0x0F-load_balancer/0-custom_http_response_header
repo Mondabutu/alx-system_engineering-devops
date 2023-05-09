@@ -1,28 +1,24 @@
-#!/usr/bin/env bash
-# Create a script to install and configure HAProxy on lb-01 server
-# Configure HAProxy to send traffic to web-01 and web-02 servers
-# Distribute requests using a roundrobin algorithm
-# Make sure that HAProxy can be managed via an init script
-# Install and configure HAproxy on my lb-01 server.
-sudo apt-get -y update
-apt-get -y install haproxy
+# configure firewall to allow request through port 80
+sudo ufw allow 'Nginx HTTP'
 
-# edit config file
-server_config=\
-"
-frontend  ehoneah-frontend
-        bind *:80
-        mode http
-        default_backend ehoneah-backend
-backend ehoneah-backend
-        balance roundrobin
-        server 63210-web-01 100.25.19.204:80 check
-        server 63210-web-02 54.157.159.85:80 check
-"
-echo "$server_config" | sudo tee -a /etc/haproxy/haproxy.cfg
+sudo mkdir -p /var/www/html
 
-# enable haproxy to be started by init script
+# change permissions to allow us to easily create files in this directory
+sudo chmod -R 755 /var/www
 
-echo "ENABLED=1" | sudo tee -a /etc/default/haproxy
+#  create the index page
+echo 'Hello World!' |sudo tee  /var/www/html/index.html
 
-sudo service haproxy restart
+# create a webpage for error 404
+echo "Ceci n'est pas une page" |sudo tee /var/www/html/404.html
+
+# code to configure redirect for a single page(/redirect_me) and add header to display hostname
+string_for_replacement="server_name _;\n\tadd_header X-Served-By \$hostname;\n\trewrite ^\/redirect_me https:\/\/www.mondabutu.tech permanent;"
+sudo sed -i "s/server_name _;/$string_for_replacement/" /etc/nginx/sites-enabled/default
+
+# code to configure redirect for 404 error page
+string_for_replacement="listen 80 default_server;\n\terror_page 404 \/404.html;\n\tlocation = \/404.html {\n\t\troot \/var\/www\/html;\n\t\tinternal;\n\t}"
+sudo sed -i "s/listen 80 default_server;/$string_for_replacement/" /etc/nginx/sites-enabled/default
+
+# restart the web server after updating the settings
+sudo service nginx restart
