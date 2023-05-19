@@ -13,11 +13,11 @@ server_config=\
 frontend  mondabutu-frontend
         bind *:80
         mode http
-        default_backend ehoneah-backend
-backend ehoneah-backend
+        default_backend mondabutu-backend
+backend mondabutu-backend
         balance roundrobin
-        server 171721-web-01 100.25.46.123:80 check
-        server 171721-web-02 54.160.68.134:80 check
+        server 171721-web-01 100.25.152.97:80 check
+        server 171721-web-02 100.25.155.124:80 check
 "
 echo "$server_config" | sudo tee -a /etc/haproxy/haproxy.cfg
 
